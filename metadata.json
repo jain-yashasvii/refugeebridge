@@ -5,12 +5,5 @@
     "camera",
     "microphone"
   ],
-  "majorCapabilities": [
-    "Secure Document Vault",
-    "Multi-language (EN, AR, HI, UR, NE, BN, TA)",
-    "NGO & Resource Search",
-    "Impact Census (India Region)",
-    "Emergency Helpline Directory",
-    "Offline Capability Indicators"
-  ]
+  "majorCapabilities": []
 }
