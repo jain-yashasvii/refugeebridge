@@ -33,7 +33,9 @@ import {
   Lock,
   Check,
   User,
-  Settings
+  Settings,
+  Plus,
+  Minus
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -675,7 +677,7 @@ const BridgeAssistant = ({ lang, onClose }: { lang: Language, onClose: () => voi
       initial={{ opacity: 0, y: 20, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 20, scale: 0.95 }}
-      className="fixed bottom-20 right-8 w-80 h-[450px] bg-[#0F2440] border border-white/20 rounded-2xl shadow-2xl flex flex-col z-[200] overflow-hidden"
+      className="fixed bottom-20 right-4 sm:right-8 w-[calc(100%-2rem)] sm:w-80 h-[450px] bg-[#0F2440] border border-white/20 rounded-2xl shadow-2xl flex flex-col z-[200] overflow-hidden"
     >
       <div className="bg-emerald-500 p-4 flex justify-between items-center">
         <div className="flex items-center gap-2 text-white">
@@ -777,6 +779,50 @@ const LanguageToggle = ({ current, onChange }: { current: Language; onChange: (l
   );
 };
 
+interface Resource {
+  id: number;
+  name: string;
+  type: 'ngo' | 'clinic' | 'center';
+  x: number;
+  y: number;
+  contact: string;
+  hours: string;
+  description: string;
+}
+
+const RESOURCES: Resource[] = [
+  {
+    id: 1,
+    name: "Okhla Health Center",
+    type: 'clinic',
+    x: 30,
+    y: 40,
+    contact: "+91 11 2632 1234",
+    hours: "09:00 - 18:00",
+    description: "Primary healthcare and vaccinations for refugee families."
+  },
+  {
+    id: 2,
+    name: "Refugee Rights NGO",
+    type: 'ngo',
+    x: 55,
+    y: 60,
+    contact: "+91 99 9991 2345",
+    hours: "10:00 - 17:00",
+    description: "Legal support and UNHCR registration assistance."
+  },
+  {
+    id: 3,
+    name: "Community Kitchen",
+    type: 'center',
+    x: 75,
+    y: 25,
+    contact: "+91 11 4100 5678",
+    hours: "08:00 - 20:00",
+    description: "Food distribution and vocational training workshops."
+  }
+];
+
 // --- Main App ---
 
 export default function App() {
@@ -790,6 +836,7 @@ export default function App() {
   const [activeCommunityTab, setActiveCommunityTab] = useState<'All Nodes' | 'Legal Support' | 'General' | 'Marketplace'>('All Nodes');
   const [moduleFeedback, setModuleFeedback] = useState<Record<string, { rating: number, comment: string }>>({});
   const [mapFocus, setMapFocus] = useState<{ x: number, y: number } | null>(null);
+  const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
@@ -1620,7 +1667,7 @@ export default function App() {
                 </div>
               </div>
               
-              <div className="flex-1 p-10 overflow-y-auto custom-scrollbar">
+              <div className="flex-1 p-4 sm:p-10 overflow-y-auto custom-scrollbar">
                 <div className="max-w-2xl mx-auto">
                   <div className="flex items-center gap-6 mb-10">
                     <div className="w-20 h-20 bg-emerald-500/10 rounded-3xl flex items-center justify-center border border-emerald-500/20">
@@ -1647,22 +1694,22 @@ export default function App() {
 
         {/* Existing Layout... */}
         {/* Header Navigation */}
-        <header className="h-16 flex-shrink-0 flex items-center justify-between px-8 bg-white/10 backdrop-blur-md border-b border-white/20 z-50">
+        <header className="h-16 flex-shrink-0 flex items-center justify-between px-4 sm:px-8 bg-white/10 backdrop-blur-md border-b border-white/20 z-50">
           <div 
             onClick={() => { setActiveModule(null); setIsBotOpen(false); }}
-            className="flex items-center gap-3 cursor-pointer group hover:opacity-80 transition-opacity"
+            className="flex items-center gap-2 sm:gap-3 cursor-pointer group hover:opacity-80 transition-opacity"
           >
-            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform">
-              <Shield className="w-5 h-5 text-white" />
+            <div className="w-7 h-7 sm:w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform">
+              <Shield className="w-4 h-4 sm:w-5 h-5 text-white" />
             </div>
             <div className="flex flex-col -space-y-1">
-              <h1 className="text-lg font-bold tracking-tight text-white leading-tight">{t.title}</h1>
-              <p className="text-[9px] uppercase tracking-widest text-emerald-400 font-extrabold">India Relay Node</p>
+              <h1 className="text-sm sm:text-lg font-bold tracking-tight text-white leading-tight">{t.title}</h1>
+              <p className="text-[8px] sm:text-[9px] uppercase tracking-widest text-emerald-400 font-extrabold">India Relay Node</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-6">
-            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border ${isOnline ? 'bg-emerald-500/20 border-emerald-500/30' : 'bg-amber-500/20 border-amber-500/30'}`}>
+          <div className="flex items-center gap-2 sm:gap-6">
+            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border ${isOnline ? 'bg-emerald-500/20 border-emerald-500/30' : 'bg-amber-500/20 border-amber-500/30'} hidden sm:flex`}>
               <div className={`w-2 h-2 rounded-full animate-pulse ${isOnline ? 'bg-emerald-400' : 'bg-amber-400'}`}></div>
               <span className={`text-[11px] font-medium uppercase tracking-wider ${isOnline ? 'text-emerald-400' : 'text-amber-400'}`}>
                 {isOnline ? t.offlineReady : 'Local Node Active'}
@@ -1672,10 +1719,10 @@ export default function App() {
           </div>
         </header>
 
-        <main className="flex-1 p-6 grid grid-cols-12 gap-6 overflow-y-auto custom-scrollbar">
+        <main className="flex-1 p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 overflow-y-auto custom-scrollbar">
           
           {/* --- Left Column: Search & Vault --- */}
-          <div className="col-span-3 flex flex-col gap-6">
+          <div className="col-span-1 lg:col-span-3 flex flex-col gap-6">
             <div 
               onClick={() => setActiveModule('profile')}
               className="bg-gradient-to-br from-[#0F2440] to-[#1A365D] border border-white/10 rounded-2xl p-4 flex items-center gap-4 cursor-pointer hover:bg-white/5 transition-all group shadow-xl"
@@ -1784,7 +1831,7 @@ export default function App() {
           </div>
 
           {/* --- Middle Column: Safe Harbor & Impact Census --- */}
-          <div className="col-span-5 flex flex-col gap-6">
+          <div className="col-span-1 lg:col-span-5 flex flex-col gap-6">
             {/* Impact Census Section */}
             <div 
               onClick={() => setActiveModule('census')}
@@ -1795,7 +1842,7 @@ export default function App() {
                 <Activity size={12} className="text-emerald-400" />
                 {t.censusTitle}
               </h2>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {impactStats.map((stat) => (
                   <div key={stat.label} className="text-center">
                     <p className={`text-2xl font-light ${stat.color} tracking-tighter`}>{stat.value}</p>
@@ -1824,7 +1871,7 @@ export default function App() {
             </div>
 
             {/* Safe Harbor Grid */}
-            <div className="grid grid-cols-2 gap-4 flex-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
               <div 
                 onClick={() => setActiveModule('shelter')}
                 className="bg-emerald-600/90 rounded-2xl p-5 flex flex-col justify-between shadow-xl shadow-emerald-900/40 border border-emerald-400/30 group hover:shadow-emerald-500/20 transition-all cursor-pointer"
@@ -1888,7 +1935,7 @@ export default function App() {
           </div>
 
           {/* --- Right Column: Map & Helplines --- */}
-          <div className="col-span-4 flex flex-col gap-6">
+          <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
             {/* Immersive Map Container */}
             <div className="bg-black/20 border border-white/10 rounded-2xl overflow-hidden flex flex-col h-[380px] shadow-2xl">
               <div className="p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
@@ -1912,14 +1959,28 @@ export default function App() {
                   />
                 )}
 
-                <div className="absolute top-[40%] left-[30%]">
-                  <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 2.5 }} className="w-4 h-4 bg-emerald-500 rounded-full border-4 border-emerald-500/20 shadow-[0_0_15px_#10B981]"></motion.div>
-                </div>
+                {/* Resource Markers */}
+                {RESOURCES.map((resource) => (
+                  <div 
+                    key={resource.id}
+                    className="absolute cursor-pointer z-10"
+                    style={{ left: `${resource.x}%`, top: `${resource.y}%` }}
+                    onClick={() => {
+                      setSelectedResource(resource);
+                      setMapFocus({ x: resource.x, y: resource.y });
+                    }}
+                  >
+                    <motion.div 
+                      whileHover={{ scale: 1.2 }}
+                      className={`w-4 h-4 rounded-full border-2 border-white shadow-[0_0_10px_rgba(255,255,255,0.5)] ${
+                        resource.type === 'clinic' ? 'bg-rose-500' : 
+                        resource.type === 'ngo' ? 'bg-emerald-500' : 'bg-sky-500'
+                      }`}
+                    ></motion.div>
+                  </div>
+                ))}
 
-                <div className="absolute top-[60%] left-[55%]">
-                  <div className="w-4 h-4 bg-emerald-500 rounded-full border-4 border-emerald-500/20 shadow-[0_0_15px_#10B981]"></div>
-                </div>
-
+                {/* User Location */}
                 <div className="absolute bottom-[20%] right-[35%] flex flex-col items-center gap-1">
                   <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-2xl border-4 border-blue-500/30">
                     <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
@@ -1927,10 +1988,61 @@ export default function App() {
                   <span className="text-[8px] font-black uppercase text-white tracking-widest shadow-lg">You</span>
                 </div>
 
+                {/* Resource Pop-up Card */}
+                <AnimatePresence>
+                  {selectedResource && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, x: '-50%' }}
+                      animate={{ opacity: 1, y: 0, x: '-50%' }}
+                      exit={{ opacity: 0, y: 10, x: '-50%' }}
+                      className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[80%] bg-[#0F2440] border border-white/20 rounded-xl p-3 shadow-2xl z-20"
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="flex items-center gap-2">
+                          <div className={`w-2 h-2 rounded-full ${
+                            selectedResource.type === 'clinic' ? 'bg-rose-500' : 
+                            selectedResource.type === 'ngo' ? 'bg-emerald-500' : 'bg-sky-500'
+                          }`} />
+                          <h4 className="text-[11px] font-black uppercase text-white">{selectedResource.name}</h4>
+                        </div>
+                        <button onClick={() => setSelectedResource(null)}>
+                          <X size={12} className="text-white/40 hover:text-white" />
+                        </button>
+                      </div>
+                      <p className="text-[10px] text-white/60 mb-2 leading-relaxed">{selectedResource.description}</p>
+                      <div className="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-white/10">
+                        <div>
+                          <p className="text-[8px] text-white/30 uppercase font-bold mb-0.5">Hours</p>
+                          <div className="flex items-center gap-1">
+                            <Clock size={10} className="text-emerald-400" />
+                            <span className="text-[9px] text-white/80">{selectedResource.hours}</span>
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-[8px] text-white/30 uppercase font-bold mb-0.5">Contact</p>
+                          <div className="flex items-center gap-1">
+                            <PhoneCall size={10} className="text-sky-400" />
+                            <span className="text-[9px] text-white/80">{selectedResource.contact}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
                 {/* Map Interface Controls */}
                 <div className="absolute top-4 right-4 flex flex-col gap-2">
-                  <button className="w-8 h-8 bg-white/10 backdrop-blur-md rounded-lg flex items-center justify-center border border-white/20 hover:bg-white/20 transition-all font-black">+</button>
-                  <button className="w-8 h-8 bg-white/10 backdrop-blur-md rounded-lg flex items-center justify-center border border-white/20 hover:bg-white/20 transition-all font-black">-</button>
+                  <button className="w-8 h-8 bg-white/10 backdrop-blur-md rounded-lg flex items-center justify-center border border-white/20 hover:bg-white/20 transition-all text-white"><Plus size={14} /></button>
+                  <button className="w-8 h-8 bg-white/10 backdrop-blur-md rounded-lg flex items-center justify-center border border-white/20 hover:bg-white/20 transition-all text-white"><Minus size={14} /></button>
+                  <button 
+                    onClick={() => {
+                      setMapFocus({ x: 65, y: 80 });
+                      setTimeout(() => setMapFocus(null), 2000);
+                    }}
+                    className="w-8 h-8 bg-emerald-500/80 backdrop-blur-md rounded-lg flex items-center justify-center border border-emerald-400/30 hover:bg-emerald-500 transition-all text-white"
+                  >
+                    <Crosshair size={14} />
+                  </button>
                 </div>
               </div>
               <div className="p-4 bg-black/40">
